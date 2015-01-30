@@ -9,10 +9,10 @@ shinyServer(function(input, output, session) {
 	  timesheet <- read.csv(inFile$datapath, header=TRUE)
 	  timesheet$Date2 <- as.Date(as.character(timesheet$Date), format="%m/%d/%Y")
 
-	  timesheet.period <- filter(timesheet, Date2>= input$start, Date2 <= input$end, WeekDay!="Sat", WeekDay!="Sun", ProjectID!='NA')
+	  timesheet.period <- filter(timesheet, Date2>= input$start, Date2 <= input$end, WeekDay!="Sat", WeekDay!="Sun", Project!="")
 	  timesheet.show <- select(timesheet.period, Date, WeekDay, Project, Hours)
-	  proj.h <- timesheet.period %>% filter(ProjectID>0, Hours!='NA') %>% summarise(Project.Hours=sum(Hours))
-	  ovhd.h <- timesheet.period %>% filter(ProjectID<0, Hours!='NA') %>% summarise(Overhead.Hours=sum(Hours))
+	  proj.h <- timesheet.period %>% filter(grepl("^Proj|^proj", Project), Hours!='NA') %>% summarise(Project.Hours=sum(Hours))
+	  ovhd.h <- timesheet.period %>% filter(!grepl("^Proj|^proj", Project), Hours!='NA') %>% summarise(Overhead.Hours=sum(Hours))
 	  tot.h  <- timesheet.period %>% filter(Hours!='NA') %>% summarise(Total.Hours=sum(Hours))
 	  overview <- cbind(proj.h, ovhd.h, tot.h)
 	  overview <- mutate(overview, Chargebility=Project.Hours/Total.Hours)
