@@ -2,6 +2,7 @@
  
 library(shiny)
 library(dplyr)
+library(ggplot2)
 
 if (file.exists ("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")) {
 	options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")

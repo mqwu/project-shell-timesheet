@@ -1,5 +1,5 @@
 
 tabPanel('Timesheet', 
-		dataTableOutput('mytable1')
+		dataTableOutput('tableTimesheet')
 	)
 
