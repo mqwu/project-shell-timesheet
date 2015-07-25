@@ -17,7 +17,7 @@ shinyServer(function(input, output, session) {
 	  ovhd.h <- timesheet.period %>% filter(!grepl("^Proj|^proj", Project), Hours!='NA') %>% summarise(Overhead.Hours=sum(Hours))
 	  tot.h  <- timesheet.period %>% filter(Hours!='NA') %>% summarise(Total.Hours=sum(Hours))
 	  
-      overview <- cbind(proj.h, ovhd.h, tot.h)
+      	  overview <- cbind(proj.h, ovhd.h, tot.h)
 	  overview <- mutate(overview, Chargebility=Project.Hours/Total.Hours)
     
 	  # project hour summarized by month (for bar plot)
@@ -34,11 +34,11 @@ shinyServer(function(input, output, session) {
 			 
 	  # project hour summarized by weekday (for timesheet)
 	  proj.by.week <- timesheet.period %>%
-                        group_by(WeekDay, Project) %>%
-                        summarise(ProjHour=sum(Hours)) 
-      proj.by.week <- proj.by.week %>% 
-						spread(WeekDay, ProjHour) %>% 
-						select(Project, Mon, Tue, Wed, Thu, Fri)
+                        	group_by(WeekDay, Project) %>%
+                        	summarise(ProjHour=sum(Hours)) 
+          proj.by.week <- proj.by.week %>% 
+				spread(WeekDay, ProjHour) %>% 
+				select(Project, Mon, Tue, Wed, Thu, Fri)
 	  proj.by.week <- as.data.frame(proj.by.week)
 
 	return(list(timesheet.show, overview, details, proj.by.mon, proj.by.week))
@@ -55,9 +55,9 @@ shinyServer(function(input, output, session) {
   output$tableSumByProj <- renderTable({ dat()[[3]] })
   
   output$plotProjByMonth <- renderPlot({
-    ggplot(data=dat()[[4]], aes(x=Mon, y=ProjHour, fill=Project)) +
-      geom_bar(stat="identity", position=position_dodge()) + scale_fill_brewer(palette = "Set1") +
-      xlab("Month") + ylab("Hours")
+    	ggplot(data=dat()[[4]], aes(x=Mon, y=ProjHour, fill=Project)) +
+      	geom_bar(stat="identity", position=position_dodge()) + scale_fill_brewer(palette = "Set1") +
+      	xlab("Month") + ylab("Hours")
   })
   
   # Tab3
