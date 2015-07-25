@@ -20,37 +20,50 @@ shinyServer(function(input, output, session) {
       overview <- cbind(proj.h, ovhd.h, tot.h)
 	  overview <- mutate(overview, Chargebility=Project.Hours/Total.Hours)
     
+	  # project hour summarized by month (for bar plot)
 	  proj.by.mon <- timesheet.period %>%
 	                  group_by(Mon, Project) %>%
 	                  summarise(ProjHour=sum(Hours)) %>%
 	                  filter(ProjHour!='NA')
 	  proj.by.mon <- as.data.frame(proj.by.mon)
-    
+	  
 	  details <- timesheet.period %>%
-	  		filter(Hours!='NA') %>%
-	  		group_by(Project) %>%
-	  	     summarise(Hours=sum(Hours))
+					filter(Hours!='NA') %>%
+					group_by(Project) %>%
+					summarise(Hours=sum(Hours))
+			 
+	  # project hour summarized by weekday (for timesheet)
+	  proj.by.week <- timesheet.period %>%
+                        group_by(WeekDay, Project) %>%
+                        summarise(ProjHour=sum(Hours)) 
+      proj.by.week <- proj.by.week %>% 
+						spread(WeekDay, ProjHour) %>% 
+						select(Project, Mon, Tue, Wed, Thu, Fri)
+	  proj.by.week <- as.data.frame(proj.by.week)
 
-	return(list(timesheet.show, overview, details, proj.by.mon))
+	return(list(timesheet.show, overview, details, proj.by.mon, proj.by.week))
   })
 
-  #Tab1
-  output$tableTimesheet <- renderDataTable({ dat()[[1]] }, options=list(orderClasses=TRUE))
+  # Tab1
+  output$tableData <- renderDataTable({ dat()[[1]] }, options=list(orderClasses=TRUE))
 
-  #Tab2
+  # Tab2
   output$tableTimeperiod <- renderPrint({ 
     cat(paste0(input$start," to ",input$end))
   })
   output$tableOverview <- renderTable({ dat()[[2]] })
-  output$tableDetail <- renderTable({ dat()[[3]] })
+  output$tableSumByProj <- renderTable({ dat()[[3]] })
   
   output$plotProjByMonth <- renderPlot({
     ggplot(data=dat()[[4]], aes(x=Mon, y=ProjHour, fill=Project)) +
       geom_bar(stat="identity", position=position_dodge()) + scale_fill_brewer(palette = "Set1") +
       xlab("Month") + ylab("Hours")
-    
   })
+  
+  # Tab3
+  output$tableTimesheet <- renderTable({ dat()[[5]] })
 
+  # Quit
   session$onSessionEnded(function(){ q() })
    
 })

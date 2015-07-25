@@ -1,18 +1,29 @@
 
 library(dplyr)
 library(ggplot2)
+library(tidyr)
 
 setwd("C:/Apps/projects/TimeSheet/2015")
 
 timesheet <- read.csv("charge15.csv", header=TRUE)
 timesheet$Date2 <- as.Date(as.character(timesheet$Date), format="%m/%d/%Y")
-timesheet.period$Mon <- format(timesheet.period$Date2, "%m")
-timesheet.period <- filter(timesheet, WeekDay!="Sat", WeekDay!="Sun", Project!="")
+timesheet.period <- filter(timesheet, Date2>='2015-05-18'& Date2<='2015-05-22') %>% select(Date2,WeekDay, Project, Hours)
 
-proj.by.mon <- timesheet.period %>%
-                              group_by(Mon, Project) %>%
-                              summarise(ProjHour=sum(Hours)) %>%
-                              filter(ProjHour!='NA')
+#timesheet.period$Mon <- format(timesheet.period$Date2, "%m")
+timesheet.period <- filter(timesheet.period, WeekDay!="Sat", WeekDay!="Sun", Project!="")
+
+#timesheet.period <- tbl_df(timesheet.period)
+proj.by.week <- timesheet.period %>%
+                        group_by(WeekDay, Project) %>%
+                        summarise(ProjHour=sum(Hours)) %>%
+                        filter(ProjHour!='NA')
+
+timesheet3 <- proj.by.week %>% spread(WeekDay, ProjHour) %>% 
+              select(Project, Mon, Tue, Wed, Thu, Fri)
+
+  
+
+
 
 proj.by.mon <- as.data.frame(proj.by.mon)
 ggplot(data=proj.by.mon, aes(x=Mon, y=ProjHour, fill=Project)) +

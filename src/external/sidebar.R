@@ -5,7 +5,7 @@ sidebarPanel(
      	),
 
      	wellPanel(
-		p(strong("Time Period of Analysis")),
+		p(strong("Please select time period for analysis")),
 		dateInput('start',label = 'Start date:',value = Sys.Date()),
 		dateInput('end',label = 'End date:',value = Sys.Date()+30)
      	)

@@ -1,7 +1,8 @@
-#.libPaths(unique(c("../lib",.libPaths())))
+.libPaths(unique(c("../lib",.libPaths())))
  
 library(shiny)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 
 if (file.exists ("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")) {

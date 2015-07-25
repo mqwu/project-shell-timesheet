@@ -1,5 +1,5 @@
 
-tabPanel('Timesheet', 
-		dataTableOutput('tableTimesheet')
+tabPanel('Data', 
+		dataTableOutput('tableData')
 	)
 
